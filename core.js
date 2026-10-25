@@ -12,6 +12,7 @@ function dlg(h,f){let d=$('#dlg');if(!d){d=document.body.appendChild(document.cr
 const say=(h,cb,b='Seguir')=>dlg(`<p>${h}</p><button class=btn>${b}</button>`,d=>d.querySelector('button').onclick=()=>{d.close();cb&&cb()}),
 ask=(q,cb,h='')=>dlg(`<p>${h}</p><h2${q.w?' class=s':''}>${q.t}${q.w?'':' = ?'}</h2><input type=number inputmode=numeric autocomplete=off aria-label="Tu respuesta"><button class=btn>¡Listo!</button>`,d=>{
  const i=d.querySelector('input'),go=()=>{if(i.value==='')return i.focus();d.close();cb(+i.value===q.a)};
- d.querySelector('button').onclick=go;i.onkeydown=e=>e.key=='Enter'&&go();i.focus()});
+ // Un manejador on* que devuelve false cancela la tecla: no usar "&&" aquí.
+ d.querySelector('button').onclick=go;i.onkeydown=e=>{if(e.key=='Enter')go()};i.focus()});
 // Autocomprobación: abre cualquier página con ?test y mira la consola.
 if(location.search=='?test')for(let i=0;i<999;i++){const q=op(R(1,12));console.assert(Number.isInteger(q.a)&&q.a>=0,q)}

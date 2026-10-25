@@ -1,0 +1,31 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Parques Matemático</title><link rel="stylesheet" href="style.css">
+<style>
+.brd{display:grid;grid-template:repeat(10,1fr)/repeat(10,1fr);gap:2px;width:min(100%,40rem);aspect-ratio:1;margin:1rem auto}
+.pc{position:relative;display:grid;place-items:center;padding:1px;font:700 clamp(.5rem,2.4vw,.95rem)/1 Fredoka,ui-rounded,system-ui,sans-serif;text-align:center;color:#fff;border:2px solid #1d1b3a;border-radius:6px}
+.k0{background:var(--b)}.k1{background:var(--r)}.k2{background:var(--g)}.k3{background:var(--y);color:#1d1b3a}
+.pc span{position:absolute;bottom:1px;left:1px;right:1px;display:flex;justify-content:center;gap:1px}
+.tk{width:.7rem;height:.7rem}
+.mid{grid-area:2/2/10/10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;padding:.5rem;text-align:center;background:var(--card);border:3px solid var(--ink);border-radius:20px}
+.mid .chip{font-size:.8rem;padding:.05rem .5rem .05rem .3rem}
+.mid p{margin:0;font-size:.9rem}
+</style>
+<main class="wrap"><a class="back" href="index.html">Volver al menú</a>
+<h1>Parques Matemático</h1>
+<p>Lanza el dado, avanza y resuelve la operación de la casilla: si fallas, te quedas donde estabas. Gana el primer equipo que da la vuelta completa. Azul +, rojo −, verde ×, amarillo ÷.</p>
+<div class="bar"><label>Equipos <select id="cnt" onchange="start()"><option>2<option>3<option>4</select></label></div>
+<div class="brd" id="b"></div></main>
+<script src="core.js"></script>
+<script>
+const P=[...Array(10)].map((_,i)=>[1,i+1]).concat([...Array(9)].map((_,i)=>[i+2,10]),[...Array(9)].map((_,i)=>[10,9-i]),[...Array(8)].map((_,i)=>[9-i,1])), // 36 casillas en el borde
+ mk=i=>opk(i%4,5+(i/3|0));
+let n,pos,t,cells,dv,msg;
+function start(){n=+$('#cnt').value;pos=Array(n).fill(0);t=0;dv='?';msg='Lanza el dado para empezar.';cells=P.map((_,i)=>({q:mk(i)}));draw()}
+function draw(){$('#b').innerHTML=cells.map((x,i)=>`<div class="pc k${i%4}" style="grid-area:${P[i][0]}/${P[i][1]}">${i?x.q.t:'Salida'}<span>${pos.map((p,j)=>p==i?`<i class="tk" style="--c:${PL[j][1]}"></i>`:'').join('')}</span></div>`).join('')+
+ `<div class="mid">${chips(n,t)}<div class="dice">${dv}</div><button class="btn" id="go">Lanzar dado</button><p>${msg}</p></div>`;$('#go').onclick=roll}
+function roll(){const d=die(),np=pos[t]+d,win=np>35,q=win?opk(R(2,3),16):cells[np].q,me=PL[t][0];dv=d;msg=`${me} sacó ${d}.`;draw();
+ ask(q,ok=>{
+  if(ok){pos[t]=np;if(win){draw();return say(`¡Gana el equipo <b>${me}</b>!`,start,'Jugar otra vez')}msg=`¡Correcto! ${me} avanza ${d}.`}
+  else{if(!win)cells[np].q=mk(np);msg=`${me} falló: era ${q.a}. Se queda donde estaba.`}
+  t=(t+1)%n;draw()},`Equipo ${me}${win?' · ¡última casilla!':''}`)}
+start();
+</script>

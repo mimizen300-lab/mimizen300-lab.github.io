@@ -1,0 +1,29 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Triqui Matemático</title><link rel="stylesheet" href="style.css">
+<style>
+.tri{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;max-width:34rem;margin:1rem 0}
+.cell{aspect-ratio:1;display:grid;place-items:center;padding:.3rem;font:700 clamp(1.1rem,5vw,1.9rem) Fredoka,ui-rounded,system-ui,sans-serif;color:var(--ink);background:var(--card);border:3px solid var(--ink);border-radius:16px;cursor:pointer}
+.cell:hover:not(:disabled){background:var(--y);color:#1d1b3a}
+.cell:disabled{cursor:default}
+.cell.mX,.cell.mO{font-size:clamp(3rem,16vw,5.5rem)}
+.mX{color:var(--b)}.mO{color:var(--r)}
+</style>
+<main class="wrap"><a class="back" href="index.html">Volver al menú</a>
+<h1>Triqui Matemático</h1>
+<p>Dos equipos, un dispositivo. Elige una casilla y resuelve la operación: si aciertas, marcas tu símbolo. Gana quien haga tres en línea.</p>
+<p id="turn" class="bar"></p><div class="tri" id="b"></div><button class="btn" id="rs">Tablero nuevo</button></main>
+<script src="core.js"></script>
+<script>
+const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]],nq=()=>opk(R(2,6),12);
+let c,t,end;
+function start(){c=Array.from({length:9},()=>({q:nq(),m:''}));t=0;end=0;draw()}
+function draw(){$('#turn').innerHTML=end?'':`Turno del equipo <b class="m${'XO'[t]}">${'XO'[t]}</b>`;
+ $('#b').innerHTML=c.map((x,i)=>`<button class="cell ${x.m&&'m'+x.m}" data-i="${i}" ${x.m||end?'disabled':''}>${x.m||x.q.t}</button>`).join('')}
+$('#b').onclick=e=>{const i=e.target.dataset.i;if(i==null)return;const x=c[i],s='XO'[t];
+ ask(x.q,ok=>{
+  if(!ok)return say(`Casi. La respuesta era <b>${x.q.a}</b>. Pierdes el turno y la casilla cambia.`,()=>{x.q=nq();t=1-t;draw()});
+  x.m=s;
+  if(L.some(l=>l.every(k=>c[k].m==s))){end=1;draw();return say(`¡Gana el equipo <b class="m${s}">${s}</b>!`,start,'Jugar otra vez')}
+  if(c.every(y=>y.m)){end=1;draw();return say('¡Empate!',start,'Jugar otra vez')}
+  t=1-t;draw()})};
+$('#rs').onclick=start;start();
+</script>

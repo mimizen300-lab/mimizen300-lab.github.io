@@ -1,0 +1,34 @@
+@import url(https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap);
+:root{--ink:#1d1b3a;--paper:#fff8e7;--card:#fff;--b:#2f6fe4;--r:#d13438;--g:#12804a;--y:#f6b800;--p:#6b3fa0;--focus:#6b3fa0;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--ink:#f4f0ff;--paper:#161433;--card:#241f4d;--focus:#f6b800}}
+*{box-sizing:border-box}
+::selection{background:var(--y);color:#1d1b3a}
+body{margin:0;min-height:100svh;font:500 1.05rem/1.45 Fredoka,ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--ink);accent-color:var(--b);caret-color:var(--b);
+background:linear-gradient(rgb(47 111 228/.13) 1px,transparent 1px) 0 0/26px 26px,linear-gradient(90deg,rgb(47 111 228/.13) 1px,transparent 1px) 0 0/26px 26px,var(--paper)}
+.wrap{max-width:62rem;margin:0 auto;padding:1rem 1rem 3rem}
+h1{font-size:clamp(2rem,7vw,3.6rem);line-height:1;margin:.5rem 0 1rem;text-wrap:balance}
+h2{margin:0;text-wrap:balance}
+p{max-width:65ch}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.back{display:inline-block;padding:.5rem 0;font-weight:600}
+.btn{min-height:2.9rem;padding:.4rem 1.2rem;font:700 1.05rem Fredoka,ui-rounded,system-ui,sans-serif;color:#1d1b3a;background:var(--y);border:3px solid #1d1b3a;border-radius:14px;cursor:pointer;box-shadow:0 6px 12px -6px rgb(0 0 0/.5)}
+.btn:hover{filter:brightness(1.07)}.btn:active{transform:translateY(2px)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.r{background:var(--r);color:#fff}
+input,select{font:inherit;color:var(--ink);border:3px solid var(--ink);border-radius:12px}
+input{width:100%;margin-bottom:1rem;padding:.5rem;font:700 1.4rem Fredoka,ui-rounded,system-ui,sans-serif;text-align:center;background:var(--paper);-moz-appearance:textfield;appearance:textfield}
+input::-webkit-inner-spin-button{appearance:none}
+select{padding:.35rem .6rem;background:var(--card)}
+label{font-weight:600}
+.bar{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:.6rem 0}
+.chip{display:inline-flex;align-items:center;gap:.4rem;padding:.15rem .8rem .15rem .4rem;font-weight:600;background:var(--card);border:3px solid var(--ink);border-radius:99px}
+.chip.on{background:var(--y);color:#1d1b3a}
+.chip i,.tk{display:inline-block;width:1rem;height:1rem;background:var(--c);border:2px solid #1d1b3a;border-radius:50%}
+.dice{display:grid;place-items:center;width:4rem;height:4rem;margin:.2rem auto;font:700 2.1rem Fredoka,ui-rounded,system-ui;color:#1d1b3a;background:#fff;border:3px solid #1d1b3a;border-radius:14px}
+dialog{width:min(92vw,26rem);padding:1.4rem;color:var(--ink);background:var(--card);border:3px solid var(--ink);border-radius:22px;text-align:center}
+dialog::backdrop{background:rgb(20 18 50/.62)}
+dialog h2{margin:0 0 1rem;font-size:clamp(1.6rem,7vw,2.3rem)}
+dialog h2.s{font-size:1.15rem;font-weight:600}
+dialog p{margin:.2rem auto 1rem}dialog p:empty{display:none}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

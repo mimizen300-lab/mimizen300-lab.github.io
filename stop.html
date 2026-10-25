@@ -1,0 +1,42 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Stop Matemático</title><link rel="stylesheet" href="style.css">
+<style>
+h1 span{display:inline-block;padding:0 .5rem;color:#fff;background:var(--r);border:3px solid #1d1b3a;border-radius:12px;rotate:-2deg}
+.sc{overflow-x:auto;margin-top:1rem}
+#t{border-collapse:separate;border-spacing:4px;min-width:42rem}
+#t th{min-width:3.4rem;padding:.4rem;font-size:1.2rem;color:#fff;background:var(--b);border:3px solid #1d1b3a;border-radius:10px}
+#t tr:first-child th:not(:first-child):not(:last-child){background:var(--y);color:#1d1b3a}
+#t td{padding:0;text-align:center}
+#t td input{min-width:3.4rem;margin:0;padding:.45rem .1rem;font-size:1.1rem}
+#t td.ok input{background:#bdecd0;color:#0b3d22}
+#t td.bad input{background:#ffd0d0;color:#5a0d0d}
+#t td.bad::after{content:attr(data-a);display:block;font-size:.85rem;font-weight:700}
+</style>
+<main class="wrap"><a class="back" href="index.html">Volver al menú</a>
+<h1><span>STOP</span> Matemático</h1>
+<p>Cada fila empieza con un número. Aplica las operaciones de la fila amarilla, una tras otra, y escribe cada resultado. Pulsa STOP cuando termines.</p>
+<div class="bar"><button class="btn r" id="stop">¡STOP!</button><button class="btn" id="new">Tabla nueva</button><b id="time">0 s</b></div>
+<div class="sc"><table id="t"></table></div></main>
+<script src="core.js"></script>
+<script>
+const f=(v,[o,n])=>o=='+'?v+n:o=='−'?v-n:o=='×'?v*n:v/n;
+// 9 operaciones comunes y 5 números iniciales; se repite hasta que toda la cadena da enteros entre 0 y 500.
+function gen(){for(;;){
+ const ops=Array.from({length:9},()=>{const k=R(0,3);return k<1?['+',R(5,15)]:k<2?['−',R(3,12)]:k<3?['×',R(2,4)]:['÷',R(2,3)]}),rows=[];
+ for(const s of shuffle([...Array(56).keys()].map(i=>i+5))){
+  let v=s;const r=ops.map(o=>v=f(v,o));
+  if(r.every(x=>Number.isInteger(x)&&x>=0&&x<=500))rows.push({s,r});
+  if(rows.length==5)return{ops,rows}}}}
+let G,t0,tm;
+function start(){G=gen();clearInterval(tm);t0=Date.now();$('#stop').disabled=false;$('#time').textContent='0 s';
+ $('#t').innerHTML=`<tr><th>#</th>${G.ops.map(o=>`<th>${o.join('')}</th>`).join('')}<th>=</th></tr>`+
+  G.rows.map(w=>`<tr><th>${w.s}</th>${w.r.map((_,j)=>`<td><input type=number inputmode=numeric aria-label="Paso ${j+1}"></td>`).join('')}<th></th></tr>`).join('');
+ tm=setInterval(()=>$('#time').textContent=Math.round((Date.now()-t0)/1e3)+' s',500)}
+$('#t').onkeydown=e=>{if(e.key=='Enter'){const a=[...$('#t').querySelectorAll('input')];a[a.indexOf(e.target)+1]?.focus()}};
+$('#stop').onclick=()=>{clearInterval(tm);$('#stop').disabled=true;let ok=0;
+ $('#t').querySelectorAll('tr').forEach((tr,i)=>{if(!i)return;let all=1;
+  tr.querySelectorAll('td').forEach((td,j)=>{const a=G.rows[i-1].r[j],i2=td.firstChild,good=i2.value!==''&&+i2.value===a;
+   td.className=good?'ok':'bad';td.dataset.a=a;ok+=good;all&=good;i2.disabled=true});
+  tr.lastChild.textContent=all?'✓':'✗'});
+ say(`Acertaste <b>${ok} de 45</b> en ${Math.round((Date.now()-t0)/1e3)} s.${ok==45?' ¡Tabla perfecta!':' La respuesta correcta aparece bajo cada casilla roja.'}`)};
+$('#new').onclick=start;start();
+</script>

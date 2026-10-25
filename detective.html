@@ -1,0 +1,41 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>El detective matemático</title><link rel="stylesheet" href="style.css">
+<style>
+.tms{display:grid;gap:.6rem;margin:1rem 0}
+.tm{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem;padding:.6rem .9rem;background:var(--card);border:3px solid var(--ink);border-radius:16px}
+.tm.on{background:var(--y);color:#1d1b3a}
+.tm>b::before{content:"";display:inline-block;width:1rem;height:1rem;margin-right:.4rem;vertical-align:-.1rem;background:var(--c);border:2px solid #1d1b3a;border-radius:50%}
+.env{display:flex;gap:.3rem}
+.env i{width:1.3rem;height:1rem;background:var(--e);border:2px solid #1d1b3a;border-radius:3px;opacity:.3}
+.env i.o{opacity:1}
+.ls{margin-left:auto;font-size:1.4rem;letter-spacing:.3rem}
+.ctl{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.ctl input{width:10rem;margin:0;font-size:1.1rem;text-transform:uppercase}
+</style>
+<main class="wrap"><a class="back" href="index.html">Volver al menú</a>
+<h1>El detective matemático</h1>
+<p>Resuelve el sobre de tu turno para ganar una letra. Cuando creas saber la palabra secreta, adivínala (sin tildes). Gana el primer equipo en descubrirla.</p>
+<div class="bar"><label>Equipos <select id="cnt" onchange="start()"><option>2<option>3<option>4</select></label></div>
+<div class="tms" id="tm"></div>
+<div class="ctl"><button class="btn" id="ob"></button><input id="gi" maxlength="8" placeholder="Palabra secreta" aria-label="Palabra secreta" autocomplete="off"><button class="btn" id="gb">Adivinar</button></div></main>
+<script src="core.js"></script>
+<script>
+const WORDS=['MATE','SUMA','CERO','DATO','LADO','MESA','PESO','RAIZ'],NM=['Operación','Problema','Razonamiento','Última pista'],EC=['--r','--b','--y','--g'],
+QS=[()=>op(3),
+ ()=>{const a=R(3,9),b=R(2,6),c=R(2,9);return{w:1,t:`Ana tiene ${a} cajas con ${b} lápices cada una y compra ${c} más. ¿Cuántos lápices tiene?`,a:a*b+c}},
+ ()=>{const s=R(1,9),d=R(2,6);return{w:1,t:`Completa la serie: ${[0,1,2,3].map(i=>s+i*d).join(', ')}, ¿?`,a:s+4*d}},
+ ()=>opk(R(5,6),9)];
+let n,W,T,t;
+// Cada equipo tiene sus propias preguntas y recibe las letras en un orden distinto.
+function start(){n=+$('#cnt').value;W=pick(WORDS);t=0;T=Array.from({length:n},()=>({k:0,ord:shuffle([0,1,2,3]),q:QS.map(f=>f())}));draw()}
+const next=h=>say(h,()=>{t=(t+1)%n;draw()});
+function draw(){
+ $('#tm').innerHTML=T.map((x,i)=>`<div class="tm${i==t?' on':''}" style="--c:${PL[i][1]}"><b>${PL[i][0]}</b><span class="env">${EC.map((c,e)=>`<i class="${e<x.k?'o':''}" style="--e:var(${c})"></i>`).join('')}</span><span class="ls">${x.ord.slice(0,x.k).map(j=>W[j]).join(' ')}</span></div>`).join('');
+ const k=T[t].k;$('#ob').textContent=k<4?`Abrir sobre ${k+1}: ${NM[k]}`:'Sobres terminados';$('#ob').disabled=k>3}
+$('#ob').onclick=()=>{const m=T[t],e=m.k,q=m.q[e];
+ ask(q,ok=>{if(ok){m.k++;next(`Resultado ${q.a}: ¡descubres la letra <b>${W[m.ord[e]]}</b>!`)}
+  else{m.q[e]=QS[e]();next('Respuesta incorrecta. Pierdes el turno y el sobre cambia.')}},`Equipo ${PL[t][0]} · sobre ${e+1}: ${NM[e]}`)};
+$('#gb').onclick=()=>{const g=$('#gi').value.trim().toUpperCase();$('#gi').value='';
+ if(g==W)return say(`¡El equipo <b>${PL[t][0]}</b> descubrió <b>${W}</b>! Ahora explica cómo resolviste tus operaciones.`,start,'Jugar otra vez');
+ if(g)next('Esa no es la palabra. Pierdes el turno.')};
+start();
+</script>

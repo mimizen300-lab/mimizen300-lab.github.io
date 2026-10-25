@@ -1,0 +1,37 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Culebra Matemática</title><link rel="stylesheet" href="style.css">
+<style>
+.brd{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;width:min(100%,40rem);margin:1rem auto}
+.sq{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font:700 clamp(.6rem,2.6vw,1rem)/1.1 Fredoka,ui-rounded,system-ui,sans-serif;background:var(--card);border:2px solid var(--ink);border-radius:6px}
+.sq small{font-size:.9em}
+.up{background:#bdecd0;color:#0b3d22}.dn{background:#ffd0d0;color:#5a0d0d}.fin{background:var(--y);color:#1d1b3a}
+.tkr{position:absolute;bottom:1px;display:flex;gap:1px}
+.tk{width:.7rem;height:.7rem}
+#i{max-width:40rem;margin:0 auto;text-align:center}#i p{margin:.4rem auto}
+</style>
+<main class="wrap"><a class="back" href="index.html">Volver al menú</a>
+<h1>Culebra Matemática</h1>
+<p>Lanza el dado y avanza. En una escalera (↑, verde) resuelve la operación para subir. En una serpiente (↓, roja) resuelve para salvarte. Los 12 niveles suben de dificultad con el número de casilla.</p>
+<div class="bar"><label>Equipos <select id="cnt" onchange="start()"><option>1<option selected>2<option>3<option>4</select></label></div>
+<div class="brd" id="b"></div><div id="i"></div></main>
+<script src="core.js"></script>
+<script>
+const lv=p=>Math.ceil(p*12/100);
+let n,pos,t,J,dv,msg;
+function start(){n=+$('#cnt').value;pos=Array(n).fill(1);t=0;dv='?';msg='Lanza el dado para empezar.';J={};
+ const used=x=>x in J||Object.values(J).includes(x); // 6 escaleras y 6 serpientes, sin casillas repetidas
+ for(let i=0;i<12;i++){let a,b;do{a=R(3,98);b=i<6?a+R(8,30):a-R(8,30)}while(b<2||b>99||used(a)||used(b));J[a]=b}
+ draw()}
+function draw(){let h='';
+ for(let r=9;r>=0;r--)for(let c=0;c<10;c++){const k=r*10+(r%2?10-c:c+1),j=J[k];
+  h+=`<div class="sq${j?j>k?' up':' dn':''}${k==100?' fin':''}">${k==100?'Meta':k}${j?`<small>${j>k?'↑':'↓'}${j}</small>`:''}<span class="tkr">${pos.map((p,i)=>p==k?`<i class="tk" style="--c:${PL[i][1]}"></i>`:'').join('')}</span></div>`}
+ $('#b').innerHTML=h;$('#i').innerHTML=`${chips(n,t)}<div class="dice">${dv}</div><button class="btn" id="go">Lanzar dado</button><p>${msg}</p>`;$('#go').onclick=roll}
+function roll(){const d=die(),np=Math.min(100,pos[t]+d),j=J[np],me=PL[t][0],q=op(lv(np));dv=d;pos[t]=np;
+ const fin=(to,m)=>{pos[t]=to;msg=m;if(to==100){draw();return say(`¡Gana el equipo <b>${me}</b>!`,start,'Jugar otra vez')}t=(t+1)%n;draw()};
+ msg=`${me} sacó ${d} y llega a la ${np}.`;draw();
+ if(!j)return fin(np,`${me} sacó ${d} y llega a la ${np}.`);
+ const up=j>np; // escalera: acertar sube; serpiente: acertar salva
+ ask(q,ok=>ok==up?fin(j,up?`¡Correcto! ${me} sube a la ${j}.`:`Era ${q.a}. ${me} cae a la ${j}.`)
+  :fin(np,up?`Era ${q.a}. ${me} se queda en la ${np}.`:`¡Te salvaste! ${me} esquiva la serpiente.`),
+  `${up?'Escalera':'Serpiente'} · nivel ${lv(np)} de 12`)}
+start();
+</script>

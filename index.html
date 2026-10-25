@@ -1,0 +1,25 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Día Matemático</title><link rel="stylesheet" href="style.css">
+<style>
+.ops{display:flex;gap:.5rem;margin:.4rem 0 .6rem}
+.ops b{display:grid;place-items:center;width:3.2rem;height:3.2rem;font-size:2rem;color:#fff;background:var(--c);border:3px solid #1d1b3a;border-radius:14px;rotate:var(--a)}
+@media(prefers-reduced-motion:no-preference){.ops b{animation:pop .6s cubic-bezier(.2,.9,.2,1) backwards;animation-delay:calc(var(--i)*90ms)}}
+@keyframes pop{from{translate:0 -2rem;opacity:0}}
+.grid{display:grid;gap:1rem;margin-top:1.5rem}
+@media(min-width:44rem){.grid{grid-template-columns:repeat(6,1fr)}.grid a{grid-column:span 2}.grid a:nth-child(-n+2){grid-column:span 3}}
+.grid a{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;min-height:12rem;padding:1.2rem;color:#fff;text-decoration:none;background:var(--c);border:3px solid #1d1b3a;border-radius:22px;box-shadow:0 14px 24px -14px rgb(0 0 0/.5);transition:transform .2s}
+.grid a:hover{transform:translateY(-4px)}
+.grid a.y{color:#1d1b3a}
+.grid b{position:absolute;top:-1.5rem;right:.6rem;font-size:9rem;line-height:1;opacity:.25}
+.grid h2{font-size:1.7rem}.grid p{margin:.2rem 0 0}
+</style>
+<main class="wrap">
+<div class="ops"><b style="--c:var(--b);--a:-4deg;--i:0">+</b><b style="--c:var(--r);--a:3deg;--i:1">−</b><b style="--c:var(--g);--a:-2deg;--i:2">×</b><b style="--c:var(--y);--a:5deg;--i:3;color:#1d1b3a">÷</b></div>
+<h1>Día Matemático</h1>
+<p>Elige un juego. Cada vez que empiezas, las operaciones son nuevas.</p>
+<nav class="grid">
+<a href="stop.html" style="--c:var(--r)"><b aria-hidden="true">=</b><h2>Stop Matemático</h2><p>Completa las cadenas de operaciones antes de pulsar STOP. Un jugador por celular.</p></a>
+<a href="triqui.html" style="--c:var(--b)"><b aria-hidden="true">×</b><h2>Triqui Matemático</h2><p>Resuelve para marcar X u O y haz tres en línea. Dos equipos.</p></a>
+<a href="parques.html" class="y" style="--c:var(--y)"><b aria-hidden="true">÷</b><h2>Parques Matemático</h2><p>Lanza el dado y responde para avanzar. De 2 a 4 equipos.</p></a>
+<a href="culebra.html" style="--c:var(--g)"><b aria-hidden="true">√</b><h2>Culebra Matemática</h2><p>Sube escaleras y esquiva serpientes con retos por niveles. De 1 a 4 equipos.</p></a>
+<a href="detective.html" style="--c:var(--p)"><b aria-hidden="true">?</b><h2>El detective matemático</h2><p>Abre sobres, junta letras y adivina la palabra secreta. De 2 a 4 equipos.</p></a>
+</nav></main>

@@ -1,0 +1,68 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Derriba el Resultado</title><link rel="stylesheet" href="style.css">
+<style>
+.sb{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:1rem 0 .4rem}
+.tm{display:grid;grid-template-columns:1fr auto;align-items:center;gap:.3rem .6rem;padding:.6rem .9rem;background:var(--card);border:3px solid var(--ink);border-radius:16px}
+.tm.on{background:var(--y);color:#1d1b3a}
+.tm>b::before{content:"";display:inline-block;width:1rem;height:1rem;margin-right:.4rem;vertical-align:-.1rem;background:var(--c);border:2px solid #1d1b3a;border-radius:50%}
+.pts{grid-row:span 2;grid-column:2;font-size:2.6rem;font-weight:700;line-height:1}
+.pips{display:flex;gap:.25rem}
+.pips i{width:.9rem;height:.9rem;border:2px solid currentColor;border-radius:50%;opacity:.5}
+.pips i.o{background:currentColor;opacity:1}
+.cups{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem .8rem;max-width:34rem;margin:1rem auto}
+.cup{position:relative;display:block;width:100%;padding:0;background:none;border:0;cursor:pointer;transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.cup:hover:not(:disabled){transform:translateY(-6px)}
+.cup svg{display:block;width:100%;height:auto;overflow:visible}
+.cup svg *{stroke:#1d1b3a;stroke-width:4;stroke-linejoin:round}
+.cup .b,.cup rect{fill:var(--c)}
+.cup .hl{fill:#fff;opacity:.35;stroke:none}
+.cup b{position:absolute;left:0;right:0;top:28%;text-align:center;font-size:clamp(1.6rem,8vw,2.6rem);line-height:1;color:var(--t)}
+.cup:disabled{cursor:default}
+.cup.down{transform:translateY(8%) rotate(-90deg)}
+.cup.miss{filter:grayscale(1);opacity:.4}
+.tag{display:block;min-height:1.6rem;text-align:center;font-weight:700}
+.tag .tk{width:.8rem;height:.8rem;vertical-align:-.1rem}
+.tb{height:.9rem;margin:.2rem 0 1rem;overflow:hidden;background:var(--paper);border:3px solid var(--ink);border-radius:99px}
+.tb i{display:block;height:100%;background:var(--g)}.tb.low i{background:var(--r)}
+.sec{margin:.2rem 0;font-weight:700}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.opt{width:100%;font-size:1.3rem;background:#fff}.opt:hover{background:var(--y)}
+</style>
+<main class="wrap"><a class="back" href="index.html">Volver al menú</a>
+<h1>Derriba el Resultado</h1>
+<p>Dos equipos de 4 jugadores. Por turnos, un jugador elige un vaso y tiene 10 segundos para responder. Si acierta, el vaso se derriba y su equipo suma un punto. Gana el equipo con más puntos al terminar los 8 vasos.</p>
+<div class="sb" id="sc"></div>
+<p id="who" class="bar"></p>
+<div class="cups" id="cups"></div>
+<button class="btn" id="rs">Juego nuevo</button></main>
+<script src="core.js"></script>
+<script>
+const CUPS=[['#4cc9f0','#1d1b3a'],['#52b788','#1d1b3a'],['#f6b800','#1d1b3a'],['#ff8a73','#1d1b3a'],['#2f6fe4','#fff'],['#12804a','#fff'],['#d13438','#fff'],['#6b3fa0','#fff']],
+// 4 opciones: la correcta y 3 cercanas, sin repetir y sin negativos.
+opts=a=>{const s=new Set([a]);while(s.size<4){const v=a+pick([-10,-3,-2,-1,1,2,3,10,R(-6,6)]);if(v>=0)s.add(v)}return shuffle([...s])};
+let cups,t,score,turns;
+// 8 vasos = 8 jugadores: multiplicación, división, raíz y operaciones combinadas, en orden aleatorio.
+function start(){
+ cups=shuffle([2,3,4,5,2,3,4,6]).map(k=>{const q=opk(k,12);q.o=opts(q.a);return{q,s:''}});t=0;score=[0,0];turns=[0,0];
+ $('#cups').innerHTML=CUPS.map((c,i)=>`<div><button class="cup" data-i="${i}" style="--c:${c[0]};--t:${c[1]}"><svg viewBox="0 0 80 96" aria-hidden="true"><path class="b" d="M16 6h48l10 76H6z"/><path class="hl" d="M24 14h7l-4 60h-9z"/><rect x="2" y="78" width="76" height="14" rx="7"/></svg><b>${i+1}</b></button><span class="tag"></span></div>`).join('');
+ draw()}
+function draw(){const done=cups.every(x=>x.s);
+ $('#sc').innerHTML=[0,1].map(i=>`<div class="tm${i==t&&!done?' on':''}" style="--c:${PL[i][1]}"><b>${PL[i][0]}</b><span class="pts">${score[i]}</span><span class="pips">${[0,1,2,3].map(k=>`<i${k<turns[i]?' class="o"':''}></i>`).join('')}</span></div>`).join('');
+ $('#who').textContent=done?'Se acabaron los vasos.':`Equipo ${PL[t][0]} · jugador ${turns[t]+1} de 4: elige un vaso.`;
+ [...$('#cups').children].forEach((d,i)=>{const x=cups[i],b=d.firstChild;b.className='cup '+x.s;b.disabled=!!x.s;
+  b.setAttribute('aria-label',`Vaso ${i+1}${x.s=='down'?', derribado':x.s?', fallado':''}`);
+  d.lastChild.innerHTML=x.s=='down'?`<i class="tk" style="--c:${PL[x.by][1]}"></i> +1`:x.s?'0':''})}
+function play(i){const q=cups[i].q;
+ dlg(`<p>Vaso ${i+1} · equipo ${PL[t][0]} · jugador ${turns[t]+1}</p><h2>${q.t} = ?</h2><p class="sec">10 s</p><div class="tb" role="timer" aria-label="Tiempo restante"><i></i></div><div class="opts">${q.o.map((v,j)=>`<button class="btn opt" data-v="${v}">${'abcd'[j]}) ${v}</button>`).join('')}</div>`,d=>{
+  const bar=d.querySelector('.tb'),sec=d.querySelector('.sec'),t1=Date.now()+1e4;let go;
+  const end=v=>{if(go)return;go=1;clearInterval(tm);d.close();result(i,v)},  // la primera respuesta es definitiva
+  tm=setInterval(()=>{const ms=Math.max(0,t1-Date.now());bar.firstChild.style.width=ms/100+'%';bar.classList.toggle('low',ms<3e3);sec.textContent=Math.ceil(ms/1e3)+' s';if(!ms)end(null)},100);
+  d.querySelectorAll('.opt').forEach(b=>b.onclick=()=>end(+b.dataset.v))})}
+// v: número elegido, o null si se acabó el tiempo. Los turnos alternan siempre entre equipos.
+function result(i,v){const c=cups[i],q=c.q,ok=v===q.a,me=PL[t][0];
+ c.s=ok?'down':'miss';c.by=t;score[t]+=+ok;turns[t]++;t=1-t;
+ const last=cups.every(x=>x.s);
+ say((ok?`¡Correcto! +1 punto para el equipo ${me}.`:`${v==null?'¡Se acabó el tiempo!':'Respuesta incorrecta.'} El resultado era <b>${q.a}</b>.`)+(last?'':` Turno del equipo ${PL[t][0]}.`),()=>{draw();if(last)setTimeout(fin,900)})}
+function fin(){const[a,b]=score;say(a==b?`¡Empate, ${a} a ${b}!`:`¡Gana el equipo <b>${PL[+(b>a)][0]}</b>, ${Math.max(a,b)} a ${Math.min(a,b)}!`,start,'Jugar otra vez')}
+$('#cups').onclick=e=>{const b=e.target.closest('.cup');if(b&&!b.disabled)play(+b.dataset.i)};
+$('#rs').onclick=start;start();
+</script>

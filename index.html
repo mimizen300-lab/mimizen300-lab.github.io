@@ -5,7 +5,7 @@
 @media(prefers-reduced-motion:no-preference){.ops b{animation:pop .6s cubic-bezier(.2,.9,.2,1) backwards;animation-delay:calc(var(--i)*90ms)}}
 @keyframes pop{from{translate:0 -2rem;opacity:0}}
 .grid{display:grid;gap:1rem;margin-top:1.5rem}
-@media(min-width:44rem){.grid{grid-template-columns:repeat(6,1fr)}.grid a{grid-column:span 2}.grid a:nth-child(-n+2){grid-column:span 3}}
+@media(min-width:44rem){.grid{grid-template-columns:repeat(3,1fr)}}
 .grid a{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;min-height:12rem;padding:1.2rem;color:#fff;text-decoration:none;background:var(--c);border:3px solid #1d1b3a;border-radius:22px;box-shadow:0 14px 24px -14px rgb(0 0 0/.5);transition:transform .2s}
 .grid a:hover{transform:translateY(-4px)}
 .grid a.y{color:#1d1b3a}
@@ -22,4 +22,5 @@
 <a href="parques.html" class="y" style="--c:var(--y)"><b aria-hidden="true">÷</b><h2>Parques Matemático</h2><p>Lanza el dado y responde para avanzar. De 2 a 4 equipos.</p></a>
 <a href="culebra.html" style="--c:var(--g)"><b aria-hidden="true">√</b><h2>Culebra Matemática</h2><p>Sube escaleras y esquiva serpientes con retos por niveles. De 1 a 4 equipos.</p></a>
 <a href="detective.html" style="--c:var(--p)"><b aria-hidden="true">?</b><h2>El detective matemático</h2><p>Abre sobres, junta letras y adivina la palabra secreta. De 2 a 4 equipos.</p></a>
+<a href="derriba.html" style="--c:#c2410c"><b aria-hidden="true">10</b><h2>Derriba el Resultado</h2><p>Elige un vaso y responde en 10 segundos para derribarlo. Dos equipos de 4.</p></a>
 </nav></main>
